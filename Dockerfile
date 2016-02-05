@@ -4,7 +4,7 @@
 
 FROM resin/rpi-raspbian
 MAINTAINER R. Cody Erben "erben22@mtnaircomputer.net"
-ENV REFRESHED_AT 2016-02-04
+ENV REFRESHED_AT 2016-02-05
 ENV RTL_SDR_REPO /tmp/rtl-sdr
 
 # Enable the source repository for jessie:
@@ -14,17 +14,12 @@ RUN echo 'deb-src http://archive.raspbian.org/raspbian/ jessie main contrib non-
 # Update the apt cache, install git, and
 # then pull the build dependencies for rtl-sdr.
 
-# May want to optimize this with something like the
-# --no-install-recommends flag.
-
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get -y install git
-RUN apt-get build-dep rtl-sdr
+RUN apt-get -y install git-core --no-install-recommends && apt-get clean
+RUN apt-get build-dep rtl-sdr --no-install-recommends && apt-get clean
 
-# Cleanup apt to make the image a bit more tidy:
+#libusb-1.0-0-dev pkg-config ca-certificates git-core cmake build-essential --no-install-recommends
 
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/*
 
 # Blacklist the rtl28xx driver so rtl-sdr is happy:
 
@@ -40,7 +35,16 @@ RUN cd $RTL_SDR_REPO/build && make
 RUN cd $RTL_SDR_REPO/build && make install
 RUN ldconfig
 
+# Cleanup our image cause that is how we roll:
+
 RUN rm -rf $RTL_SDR_REPO
+RUN apt-get -y --purge autoremove git-core rtl-sdr perl cmake cpp dpkg-dev \
+  make libusb-* g++
+RUN apt-get clean
+RUN rm -f /var/lib/apt/lists/* && \
+    rm -f /var/cache/apt/archives/*.deb && \
+    rm -f /var/cache/apt/archives/partial/*.deb && \
+    rm -f /var/cache/apt/*.bin
 
 # Stuff that will move into a container specific
 # to running a given rtl program.
