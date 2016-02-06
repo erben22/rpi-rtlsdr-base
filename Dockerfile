@@ -14,12 +14,11 @@ RUN echo 'deb-src http://archive.raspbian.org/raspbian/ jessie main contrib non-
 # Update the apt cache, install git, and
 # then pull the build dependencies for rtl-sdr.
 
-RUN apt-get update && apt-get -y upgrade
+RUN apt-get update && apt-get -y upgrade && apt-get clean
 RUN apt-get -y install git-core --no-install-recommends && apt-get clean
 RUN apt-get build-dep rtl-sdr --no-install-recommends && apt-get clean
 
 #libusb-1.0-0-dev pkg-config ca-certificates git-core cmake build-essential --no-install-recommends
-
 
 # Blacklist the rtl28xx driver so rtl-sdr is happy:
 
@@ -38,10 +37,10 @@ RUN ldconfig
 # Cleanup our image cause that is how we roll:
 
 RUN rm -rf $RTL_SDR_REPO
-RUN apt-get -y --purge autoremove git-core rtl-sdr perl cmake cpp dpkg-dev \
-  make libusb-* g++
+#RUN apt-get -y --purge autoremove git-core rtl-sdr perl cmake cpp dpkg-dev \
+#  make libusb-* g++
 RUN apt-get clean
-RUN rm -f /var/lib/apt/lists/* && \
+RUN rm -rf /var/lib/apt/lists/* && \
     rm -f /var/cache/apt/archives/*.deb && \
     rm -f /var/cache/apt/archives/partial/*.deb && \
     rm -f /var/cache/apt/*.bin
