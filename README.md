@@ -1,4 +1,4 @@
-# rpi-rtlsdr-base-image
+# rpi-rtlsdr-base
 
 Repository for a base docker image for the Raspberry Pi with rtl-sdr support.  Leveraging from the resin/rpi-raspbian base image, this image serves as the base for running containers of the various rtl-sdr programs such as rtl_tcp.
 
