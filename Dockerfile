@@ -3,7 +3,7 @@
 # Initial base is from the resin rpi-raspbian image.
 
 FROM resin/rpi-raspbian
-MAINTAINER R. Cody Erben "erben22@mtnaircomputer.net"
+MAINTAINER R. Cody Erben
 ENV REFRESHED_AT 2016-02-05
 ENV RTL_SDR_REPO /tmp/rtl-sdr
 
